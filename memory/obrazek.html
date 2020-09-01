@@ -1,0 +1,7 @@
+<img ng-repeat="x in dane track by $index" 
+     ng-src="{{dane[$index].sourceLog}}" 
+     class="bloczki" 
+     id="obrazek{{dane[$index].number}}" 
+     alt="{{dane[$index].source}}" 
+     ng-click="dane[$index].funkcja(dane[$index])"
+     />

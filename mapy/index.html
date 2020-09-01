@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Mapa</title>
+    <script src="libs/jquery-3.1.0.min.js"></script>
+    <script src="libs/gmap3.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEfZTI9MqAdOnfteYe7qOPOg2i2Ew8HzY&region=PL"></script>
+
+    <script charset="utf-8">
+        
+        $(document).ready(function () {
+            
+
+
+            $("#divMap").gmap3({  //wycentrowanie na szko³e
+                map: {
+                    options: {
+                        center: [50.04711200692994, 19.921597838401794],
+                        zoom: 15,
+                        disableDefaultUI: true
+
+                    },
+                }
+            })
+
+            /*
+            google.maps.MapTypeId.:
+            roadmap 
+            satellite 
+            hybrid
+            terrain
+            */
+
+            var g = 0
+            var pr = 1
+            var ls = window.localStorage
+            var tab = []
+            var numerek
+            var wcio=false
+            $("#divMap").gmap3({//klik na mapie
+                map: {
+                    events: {
+                        click: function (map, event) {
+
+                            if (wcio) {
+                                $("#divMap").gmap3({
+                                    clear: {
+                                        name: ["marker", "polyline"]
+                                    }
+                                })
+                                $("#lista").empty()
+                                tab = []
+                                pr = 1
+                            }
+                            wcio=false
+                            $("#divMap").gmap3({
+                                marker: {
+                                    options: {
+                                        draggable: true,
+                                    },
+                                    latLng: [event.latLng.lat(), event.latLng.lng()],
+                                    id: "mark" + g,
+                                }
+                            })
+
+
+                            tab.push({ lat: event.latLng.lat(), lng: event.latLng.lng(), zoom: map.getZoom() })
+                           
+                            $("#stv").gmap3({    //street view
+                                map: {
+                                    options: {
+                                        zoom: 14,
+                                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                                        streetViewControl: true,
+                                        center: [event.latLng.lat(), event.latLng.lng()]
+                                    }
+                                },
+                                streetviewpanorama: {
+                                    options: {
+                                        container: $("#stv"),
+                                        opts: {
+                                            position:[ event.latLng.lat(),event.latLng.lng()],
+                                            pov: {
+                                                heading: 34,
+                                                pitch: 10,
+                                                zoom: 1
+                                            }
+                                        }
+                                    }
+                                } 
+                            })
+
+
+                        }
+                    }
+                }
+            })
+
+            $("#divMap").on("click", function () {//generacja divów
+                var div = $("<div>")
+                div.attr("class", "list")
+                div.attr("id", "pozycja" + pr)
+                div.text("Pozycja " + pr)
+                $("#lista").append(div)
+                
+               
+
+                $(div).on("click", function () {//kliki na divy
+                    var wczytanie = $(this).index()
+                    $("#divMap").gmap3({
+                        map: {
+                            options: {
+                                center: [tab[wczytanie].lat, tab[wczytanie].lng],
+                                zoom: tab[wczytanie].zoom,
+                                disableDefaultUI: true
+
+                            },
+                        }
+                    })
+                })
+            })
+            
+            $("#divMap").on("click", function () {//generacja x na divach
+                var btm = $("<div>")
+                btm.attr("class", "usun")
+                btm.text("X")
+                $("#pozycja" + pr).append(btm)
+                
+                
+                $(btm).on("click", function () { //usuwanie danych z tablic,markerów,divów   
+                    var wczytanie = $(this).parent().index()
+                    var mat = $(this).parent().attr("id").substr(7) - 1
+                    tab.splice(wczytanie, 1)
+                    var item = $(this).parent()
+                    item.remove()
+
+                    $("#divMap").gmap3({
+                        clear: {
+                            id: "mark" + mat,
+                        }
+                    })
+                    
+
+                })
+                g++
+                pr++
+
+
+            })
+
+
+            $("#odczyt").on("click", function () {   //odczytanie danych z pamieci
+                bbb = JSON.parse(ls.getItem("poz"));
+
+                for (var i = 0; i < bbb.length; i++)//dodanie ich do tablicy
+                    tab.push(bbb[i])
+
+                for (var i = 0; i < bbb.length ; i++) {//generacja divów i X
+                    var div = $("<div>")
+                    div.attr("class", "list")
+                    div.attr("id", "pozycja" + pr)
+                    div.css("background", "dodgerblue")
+                    div.text("Pozycja " + pr)
+                    $("#lista").append(div)
+
+                    var btm = $("<div>")
+                    btm.attr("class", "usun")
+                    btm.text("X")
+                    $("#pozycja" + pr).append(btm)
+
+                    g++
+                    pr++
+
+                }
+
+                $(".usun").on("click", function () {//powtórzenie usuwania 
+                    var wczytanie = $(this).parent().index()
+                    tab.splice(wczytanie, 1)
+                    var item = $(this).parent()
+                    item.remove()
+
+                })
+
+
+                $(".list").on("click", function () {//klik na div
+                    var wczytanie = $(this).index()
+
+                    $("#divMap").gmap3({
+                        map: {
+                            options: {
+                                center: [tab[wczytanie].lat, tab[wczytanie].lng],
+                                zoom: tab[wczytanie].zoom,
+                                disableDefaultUI: true
+
+                            },
+                        }
+                    })
+
+                })
+
+                
+
+            })
+
+
+            $("#zapisz").on("click", function () {  //zapisanie danych do pamiêci
+                ls.setItem("poz", JSON.stringify(tab))
+            })
+
+            $("#usun").on("click", function () {//usiniêcie danych z pamiêci
+                ls.clear()
+            })
+            function rysowanie() {
+            
+            }
+            $("#rysuj").on("click", function () {//rysowanie nie dzia³¹!!!
+                $("#divMap").gmap3({
+                    clear: {
+                        name: ["polyline"]
+                    }
+                })
+                $("#divMap").gmap3({
+                    polyline: { // wielok¹t
+                        options: {
+                            strokeColor: "#0000ff",
+                            strokeOpacity: 0.5,
+                            strokeWeight: 4,
+                            path: tab
+                        }
+                    }
+                })         
+            })
+           
+            
+            $("#typmapy").on("click", function () {
+                $("#mapki").fadeIn(500, function () {
+                })
+            })
+
+            $("#zamknij").on("click", function () {
+                $("#mapki").fadeOut(500, function () {
+                })
+            })
+
+            
+
+            var map = $("#divMap").gmap3("get")
+
+            $("#road").on("click", function () {
+                map.setMapTypeId(google.maps.MapTypeId.ROADMAP)
+            })
+            $("#hybr").on("click", function () {
+                map.setMapTypeId(google.maps.MapTypeId.HYBRID)
+            })
+            $("#sate").on("click", function () {
+                map.setMapTypeId(google.maps.MapTypeId.SATELLITE)
+            })
+            $("#terra").on("click", function () {
+                map.setMapTypeId(google.maps.MapTypeId.TERRAIN)
+            })
+
+
+            $("#rg1,#rg2,#rg3").on("input", function () { //suwaki
+                $("#divMap").gmap3({
+                    map: {
+                        options: {
+                            center: [($("#rg1").val()), ($("#rg2").val())],
+                            zoom: parseInt(($("#rg3").val())),
+                            disableDefaultUI: true
+
+                        },
+                    }
+                })
+            })
+
+
+            var stan=false 
+            $("#bars").on("click", function () {//wysuwanie panelu bocznego
+                if (!stan) {
+                    $("#wysuwanie").animate({ "left": "0px" }, 500);
+                } else {
+                    $("#wysuwanie").animate({ "left": "-100%" }, 500);
+                }
+                stan = !stan
+            })
+
+            var tabkol = []              //tablica kolorów
+            tabkol[0] = "(255,0,0)"
+            tabkol[1] = "(255,125,0)"
+            tabkol[2] = "(255,255,0)"
+            tabkol[3] = "(255,255,150)"
+            tabkol[4] = "(130,125,125)"
+            tabkol[5] = "(130,255,0)"
+            tabkol[6] = "(60,80,255)"
+            tabkol[7] = "(10,255,255)"
+            tabkol[8] = "(0,10,230)"
+
+            for (var i = 0; i < 9; i++) {   //maleta podstawowa
+                var ppl = $("<div>")
+                ppl.attr("class", "punktypalety")
+                ppl.css("background", "rgb" + tabkol[i])
+                ppl.attr("id", "idp" + i)
+                $("#paleta").append(ppl)
+            }
+
+               
+               $(".punktypalety").on("click", function () {
+                   $("#dpaleta").empty()//paleta zaawansowana
+                   aktkolor = $(this).css("backgroundColor")
+                   aktkolor = aktkolor.replace("rgb(", "")
+                   aktkolor = aktkolor.replace(")", "")
+                   aktkolor = aktkolor.split(", ")
+                   for (var i = 0; i < 6; i++) {//zmiania kolorów,generacja
+
+                       aktkolor[0] = aktkolor[0] - 30
+                       aktkolor[1] = aktkolor[1] - 20
+
+                       var kkolor = "rgb(" + aktkolor[0] + "," + aktkolor[1] + "," + aktkolor[2] + ")"
+
+                       var dpl = $("<div>")
+                       dpl.attr("class", "punktypaletyzaaw")
+                       dpl.css("background",kkolor)
+                       dpl.attr("id", "idz" + i)
+                       $("#dpaleta").append(dpl)
+                   }
+                   $(".punktypaletyzaaw").fadeIn(500, function () { })//pojawienie sie pal.zaaw.
+
+                   $(".punktypaletyzaaw").on("click", function () { //rysowanie trasy o wybranym kolorze
+                       aktkolor = $(this).css("backgroundColor")
+                       
+                       $("#kolornik").fadeOut(500, function () { })
+                       $("#divMap").gmap3({
+                           polyline: {
+                               options: {
+                                   strokeColor: aktkolor,
+                                   strokeOpacity: 0.5,
+                                   strokeWeight: 4,
+                                   path: tab
+                               }
+                           }
+
+                       })
+
+                   })
+
+                  
+               })
+
+               $("#kolory").on("click", function () {//pojawienie sie kolornika
+                   $("#kolornik").fadeIn(500, function () {})
+               })
+
+            $("#zamknij2").on("click", function () {    //zankniêcie sie kolornika
+                $("#kolornik").fadeOut(500, function () {})
+            })
+            
+            $("#lokal").on("click", function () {//lokalizowanie
+                var st = confirm("Zlokalizowaæ?")
+                var llat
+                var llng
+                if (st) {
+
+                    navigator.geolocation.getCurrentPosition(
+                    function (position) {
+
+                        llat=position.coords.latitude
+                        llng = position.coords.longitude
+                        $("#divMap").gmap3({
+                            marker: {
+                                options: {
+                                    draggable: true,
+
+                                },
+                                latLng: [llat, llng]
+                            },
+                            map: {
+                                options: {
+                                    center: [llat, llng],
+                                    zoom: 15,
+                                    disableDefaultUI: true
+
+                                },
+                            }
+                        })
+
+                        $("#stv").gmap3({    //street view
+                            map: {
+                                options: {
+                                    zoom: 14,
+                                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                                    streetViewControl: true,
+                                    center: [llat, llng]
+                                }
+                            },
+                            streetviewpanorama: {
+                                options: {
+                                    container: $("#stv"),
+                                    opts: {
+                                        position: [llat, llng],
+                                        pov: {
+                                            heading: 34,
+                                            pitch: 10,
+                                            zoom: 1
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
+
+                    },
+                    function (error) {
+                        alert("problem z lokalizacj¹")
+                    },
+                    {
+                        maximumAge: 10000,    // czas dostêpu do danych
+                        timeout: 15000,       // po tym czasie error jeœli brak danych
+                        enableHighAccuracy: true // dok³adnoœæ
+                    }
+
+                    
+                    )               
+
+                }
+            })
+            
+            $("#wyslij").on("click", function () {
+                var data = new Date()
+                var rok = data.getFullYear()
+                var miesiac = data.getMonth() +1
+                var dzien = data.getDate()
+                var godziny = data.getHours()
+                var minuty = data.getMinutes()
+                var sekundy = data.getSeconds()
+                
+                var ssd=""
+                for (var i = 0; i < tab.length; i++) {
+                    ssd = ssd + ",[" + tab[i].lng + "," + tab[i].lat + "," + tab[i].zoom + "]"
+                }
+
+                data = '"' + dzien + "-" + miesiac + "-" + rok + " " + godziny + ":" + minuty + ":" + sekundy + '"'
+
+                var nazwa = prompt("Podaj nazwê wycieczki:")
+                if (nazwa != "") {
+                    //co chemy wys³aæ
+                    var obj = {
+                        nazwa: '"' + nazwa + '"',
+                        kolor: '"' + aktkolor + '"',
+                        dataa:  data ,
+                        tablica: ssd,
+                    }
+                    //jak chemy wys³aæ-Ajax
+                    $.ajax({
+                        type: "POST",//sposób
+                        url: "http://localhost:49515/KrawczykMapyGoogle/SaveFile.aspx",//url 
+                        data: obj,//zmienna
+                        dataType: "text",//typ
+                        success: function (response) {//jak sie powiedzie
+                            alert(":) " + response)
+                        },
+                        error: function (response) {//jak sie nie powiedzie
+                            alert(":( " + response.responseText)
+                        }
+                    })
+                } else {
+                    alert("Podaj nazwê wycieczki!")
+                }
+            })
+
+
+            $("#odczytplik").on("click", function () {//wysuwanie panelu bocznego
+                $("#wysowanie2").animate({ "left": "0px" }, 500);
+                
+                $("#pojemnik").empty()
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:49515/KrawczykMapyGoogle/readfile.aspx",
+                    dataType: "text",
+                    success: onSuccess,
+                    error: function (response) {
+                        alert(response.responseText)
+                    }
+                });
+
+                function onSuccess(response) {
+
+                    var allTripsOnServer = JSON.parse(response);
+
+
+                    var firstTrip = allTripsOnServer[0];
+
+                    
+                    for (var i = 0; i < allTripsOnServer.length; i++) {
+                        var cpl = $("<div>")
+                        cpl.attr("class", "pojedynczy")
+                        cpl.attr("id", "idzk" + i)
+                        cpl.text("Wycieczka " + (i + 1))
+                        $("#pojemnik").append(cpl)
+                    }
+
+                    for (var i = 0; i < allTripsOnServer.length; i++) {
+                        var pcl = $("<div>")
+                        pcl.attr("class", "zamk")
+                        pcl.text("i")
+                        pcl.css("top", 100 + (32 * i))
+                        $("#pojemnik").append(pcl)
+                    }
+
+                    $(".zamk").on("click", function () {
+                        var ind = $(this).index()-allTripsOnServer.length
+                        var wycieczka = allTripsOnServer[ind]
+                        $("#info").fadeIn(500, function () { })
+                        $("#wyc0").text("Nazwa: "+wycieczka[0])
+                        $("#wyc1").text("Kolor: "+wycieczka[1])
+                        $("#wyc2").text("Data: "+wycieczka[2])
+                    })
+
+                    $("#info").on("click", function () {
+                        $("#info").fadeOut(500, function () { })
+                    })
+
+                    $(".pojedynczy").on("click", function () {
+                        $("#divMap").gmap3({
+                            clear: {
+                                name:["marker","polyline"]
+                            }
+                        })
+                        $("#lista").empty()
+                        tab = []
+                        pr = 1
+
+                        
+                        var ind = $(this).index()
+                        var wycieczka = allTripsOnServer[ind];
+                        var wycieczkakor = ""
+                        var wycieczkakolor = wycieczka[1]
+                        for (var i = 3; i < wycieczka.length; i++) {
+                            wycieczkakor = wycieczkakor + wycieczka[i]
+                            var obw = {
+                                lat: wycieczka[i][0],
+                                lng: wycieczka[i][1],
+                                zoom: wycieczka[i][2],
+                            }
+                            tab.push({ lng: wycieczka[i][0], lat: wycieczka[i][1], zoom: wycieczka[i][2] })
+                            var div = $("<div>")
+                            div.attr("class", "list")
+                            div.attr("id", "pozycja" + pr)
+                            div.css("background", "dodgerblue")
+                            div.text("Pozycja " + pr)
+                            $("#lista").append(div)
+                            pr++
+                        }
+                        
+                        $("#divMap").gmap3({
+                            marker: {
+                                values: tab
+                            },
+                            polyline: {
+                                options: {
+                                    strokeColor: wycieczkakolor,
+                                    strokeOpacity: 0.8,
+                                    strokeWeight: 4,
+                                    path: tab
+                                }
+                            },
+                            autofit: {} // focus na wycieczkê - przybli¿enie
+                        })
+
+                        $(".list").on("click", function () {//klik na div
+                            var wczytanie = $(this).index()
+
+                            $("#divMap").gmap3({
+                                map: {
+                                    options: {
+                                        center: [tab[wczytanie].lat, tab[wczytanie].lng],
+                                        zoom: tab[wczytanie].zoom,
+                                        disableDefaultUI: true
+                                    },
+                                }
+                            })
+                        })
+                        wcio = true
+                    })
+                }
+
+            })
+
+            $("#iks").on("click", function () {
+                $("#wysowanie2").animate({ "left": "-100%" }, 500);
+            })
+            
+            
+            
+        })
+        
+
+    </script>
+    <style>
+        #informacje {
+            width:40%;
+            height:15%;
+            margin-left:30%;
+            margin-top:20%;
+            color:white;
+            font-weight:bold;
+        }
+        #info {
+            position:absolute;
+            width:100%;
+            height:100%;
+            background: rgba(0,0,0, 0.80); 
+            display:none;
+        }
+        .zamk {
+            text-align:center;
+            cursor:pointer;
+            overflow:auto;
+            position:absolute;
+            font-size:20px;
+            width:23px;
+            height:23px;
+            border-radius:23px;
+            background-color:chocolate;
+            margin-left:3%;
+            margin-top:2%;
+        }
+        .usun {
+            border:2px black solid;
+            margin-left:5px;
+            background-color:chocolate;
+            cursor:pointer;
+            display:block;
+        }
+        #divMap {
+             width:70%;
+             height:100vh;
+        }
+        #divMenu {
+            width:29.7%;
+            height:100vh;
+            background-color:dodgerblue;
+        }
+        div {
+            padding:0;
+            margin:0;
+            float:left;
+        }
+        body {
+            margin:0;
+            padding:0;
+        }
+        #pasek {
+            background-color:black;
+            width:0.3%;
+            height:100vh;
+        }
+        #input {
+            padding:0;
+            margin:0;
+        }
+        input[type=range] {
+             
+        }
+        input[type=range] {
+            -webkit-appearance: none;  /* ¿eby dzia³a³o na chormoie        http://www.cssportal.com/style-input-range/ --> */ 
+             margin: 10px 0;
+             cursor:pointer;
+             width: 100%;           
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {  /*  pasek */ 
+            width: 100%;
+            height: 12px;
+            background: orange;
+            border: 1px solid black;
+        }
+       
+        input[type=range]::-webkit-slider-thumb {          /*  kó³ko */ 
+              border: 2px solid orange;
+              height: 23px;
+              width: 23px;
+              border-radius: 20px;
+              background: black;
+              cursor: pointer;
+              -webkit-appearance: none;
+              margin-top: -7px;
+        }
+
+        #lista{
+            background-color: chocolate;
+            margin-left:15%;
+            margin-top:45%;
+            height: 50%;
+            width:70%;
+            overflow:auto;
+            border:2px solid black;
+        }
+        .list {
+            cursor:pointer;
+            width:100%;
+            height:25px;
+            background-color: dodgerblue;
+            border-bottom:2px black dotted;
+            text-align:center;
+            padding-top:5px;
+        }
+        #wysuwanie {
+            position:absolute;
+            width:20%;
+            background-color:dodgerblue;
+            left:-100%;
+            height:100vh;
+            overflow:visible;
+
+        }
+        .podpunkty {
+            background-color:chocolate;
+            font-size:100%;
+            width:100%;
+            text-align:center;
+            height:5%;
+            border:1px black solid;
+            cursor: pointer;
+            margin-top:3px;
+            border-radius:10px;
+        }
+        #listalew {
+            text-align:center;
+            width:70%;
+            margin-left:15%;
+            margin-top:50%;
+        }
+        #bars {
+            cursor: pointer;
+            left:0;
+            position:absolute;
+        }
+        #stv {
+            margin-top:30px;
+            background-color:chocolate;
+            width:100%;
+            height:40vh;
+            text-align:center;
+            z-index:0;
+            
+        }
+        #zamknij,#zamknij2 {
+            width:10%;
+            height:10%;
+            position:absolute;
+            right:0;
+            top:0;
+            cursor:pointer;
+        }
+          #mapki {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display:none; 
+            background: rgba(0,0,0, 0.80); 
+        }
+        #mapkiChild {
+            margin-left:18%;
+            margin-top:20%;
+        }
+        .klasamapek {
+            cursor:pointer;
+        }
+        #kolornik {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display:none; 
+            background: rgba(0,0,0, 0.80); 
+        }
+        #paleta {
+            width:40%;
+            height:70%;
+            position: absolute;
+            left:30%;
+            top:5%;
+            cursor:pointer;
+            z-index:1;
+        }
+        #dpaleta {
+            width:10%;
+            height:80%;
+            position:absolute;
+            left:10%;
+            top:5%;
+            cursor:pointer;
+        }
+        .punktypalety {
+            height:70px;
+            width:70px;
+            margin-left:12%;
+            margin-top:12%;
+            border:1px black solid;
+            border-radius:100%;
+            position:relative;
+            background-color:dodgerblue;
+        }
+        .punktypaletyzaaw {
+            height:50px;
+            width:50px;
+            margin-left:12%;
+            margin-top:12%;
+            border:1px black solid;
+            border-radius:100%;
+            background-color:blue;
+            display:none;
+        }
+        
+        #wysowanie2{
+            position:absolute;
+            width:20%;
+            background-color:dodgerblue;
+            left:-100%;
+            height:100vh;
+            overflow:visible;
+        }
+        #iks {
+            position:absolute;
+            left:80%;
+            top:10px;
+            width:30px;
+            height:30px;
+            cursor:pointer;
+        }
+        #pojemnik {
+            background-color:chocolate;
+            width:98%;
+            height:50%;
+            margin-top:100px;
+            overflow:auto;
+            border:2px solid black;
+        }
+
+        .pojedynczy {
+            width:100%;
+            height:30px;
+            background-color:dodgerblue;
+            border-bottom:2px dotted black;
+            text-align:center;
+            cursor:pointer;
+            font-size:21px;
+        }
+    </style>
+
+</head>
+    
+<body>
+    
+    <div id="divMap"></div>
+    
+    <div id="wysuwanie">
+        <div id="listalew">
+            <div class="podpunkty" id="zapisz">zapisz lokalizacje</div>
+            <div class="podpunkty" id="odczyt">odczytaj lokalizacje</div>
+            <div class="podpunkty" id="rysuj">rysuj trasê</div>
+            <div class="podpunkty" id="usun">usuñ z pamieci</div>
+            <div class="podpunkty" id="typmapy">typ mapy</div>
+            <div class="podpunkty" id="kolory">kolory</div>
+            <div class="podpunkty" id="lokal">lokalizuj</div>
+            <div class="podpunkty" id="wyslij">wyœlij na serwer</div>   
+            <div class="podpunkty" id="odczytplik">odczytaj z serwera</div>
+        </div>
+        <div id="stv"></div>
+    </div>
+    <div id="wysowanie2">
+        <div id="pojemnik"></div>
+        <img id="iks" src="iks.png" alt="iks" />
+
+    </div>
+    <img id="bars" src="bars.png" alt="menuu" />
+    <div id="kolornik">
+        <img id="zamknij2" src="makl/iks.png" alt="iks" />
+        <div id="dpaleta"></div>
+        <div id="paleta"></div>
+    </div>
+    <div id="info">
+        <div id="informacje">
+            <div class="wyc" id="wyc0">Nazwa wycieczki: </div><br />
+            <div class="wyc" id="wyc1">Kolor: </div><br />
+            <div class="wyc" id="wyc2">Data: </div>
+        </div>
+    </div>
+    <div id="mapki">
+        <img id="zamknij" src="makl/iks.png" alt="iks" />
+        <div id="mapkiChild">
+            <img class="klasamapek" id="road" src="makl/road.png" alt="road" />
+            <img class="klasamapek" id="hybr" src="makl/hybr.png" alt="hybr" />
+            <img class="klasamapek" id="sate" src="makl/sate.png" alt="sate" />
+            <img class="klasamapek" id="terra" src="makl/terra.png" alt="terra" />
+        </div>
+
+    </div>
+    
+    <div id="pasek"></div>
+
+    <div id="divMenu">
+        <div id="suwaki">
+            <input type="range" min="-90" max="90" value="50.04711200692994" step="0.00000000000001" id="rg1"/>
+            <input type="range" min="-180" max="180" value="19.921597838401794" step="0.00000000000001" id="rg2"/>
+            <input type="range" min="1" max="15" value="15" id="rg3"/>
+        </div>
+        <div id="lista"></div>
+    </div>
+    
+    
+</body>
+</html>

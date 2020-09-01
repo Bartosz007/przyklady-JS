@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>zuzel</title>
+        <script>
+        window.onload=function(){
+            var liczba_graczy=parseInt(prompt("Podaj liczbę graczy 1-4"))
+            var l_okr=parseInt(prompt("Okrążeń(1-5)"))
+            
+            if(liczba_graczy>4)
+                liczba_graczy=4
+            if(l_okr>5)
+                l_okr=5                
+            
+            var dv=document.createElement("div")
+            dv.className="log"
+            dv.textContent=">> Grę rozpoczęło "+liczba_graczy+" graczy"
+            document.getElementById("logi").appendChild(dv)
+            
+            var dv=document.createElement("div")
+            dv.className="log"
+            dv.textContent=">> Liczba okrążeń : "+ l_okr
+            document.getElementById("logi").appendChild(dv)
+            
+            document.body.onblur=function(){
+                document.body.focus()
+            }
+            
+            var pamiec={
+                klawisz_a:0,
+                klawisz_h:0,
+                srednik:0,
+                num:0
+            }
+            
+            var pozycja=[{x:500,y:300,dlx:0,dly:0,kat:0,rad:1,status:1,kolor:"#FF0000",promien:1.5,status:1,kolor2:"czerwony",czp:0,okr:0},
+                         {x:500,y:325,dlx:0,dly:0,kat:0,rad:1,status:1,kolor:"#0FF000",promien:1.5,status:1,kolor2:"zielony",czp:0,okr:0},
+                         {x:500,y:355,dlx:0,dly:0,kat:0,rad:1,status:1,kolor:"#000FF0",promien:1.5,status:1,kolor2:"niebieski",czp:0,okr:0},
+                         {x:500,y:380,dlx:0,dly:0,kat:0,rad:1,status:1,kolor:"#00FFFF",promien:1.5,status:1,kolor2:"morski",czp:0,okr:0}]
+
+            var c=document.getElementById("cvs");
+            var ctx=c.getContext("2d");
+            ctx.beginPath();
+            ctx.fillStyle="#0099FF";
+            ctx.fillRect(0,0,801,401);
+            ctx.closePath();
+            
+            ctx.beginPath();            
+            ctx.arc(200, 201, 200, 0.5*Math.PI, 1.5 * Math.PI);
+            ctx.arc(601, 200, 200, 1.5*Math.PI, 0.5 * Math.PI);
+            ctx.closePath();           
+            ctx.fillStyle="#FFFFFF";
+            ctx.lineWidth=8;
+            ctx.fill();
+            ctx.stroke();
+            
+            
+            ctx.beginPath();
+            ctx.arc(200, 201, 70, 0.5*Math.PI, 1.5 * Math.PI);
+            ctx.arc(601, 200, 70, 1.5*Math.PI, 0.5 * Math.PI);
+            ctx.closePath();
+            ctx.fillStyle="#0099FF";
+            ctx.fill()
+            ctx.lineWidth=8;
+            ctx.stroke();
+            
+            
+            ctx.beginPath();
+            ctx.moveTo(500,271)
+            ctx.lineTo(500,401);
+            ctx.strokeStyle="#474747"
+            ctx.lineWidth=4;
+            ctx.stroke();
+            ctx.closePath();
+            
+            for(var i=0;i<liczba_graczy;i++){
+                var img=document.createElement("img")  
+                img.src="z"+i+".png"
+                img.id="mt"+i
+                img.className="motory"
+                document.getElementById("motorki").appendChild(img) 
+                document.getElementById("mt0").style.left=(pozycja[i].x+19)+"px"
+                document.getElementById("mt0").style.top=(pozycja[i].y-2)+"px"
+            }
+            
+            var animacja = setInterval(function(){  
+                for(var i=0;i<liczba_graczy;i++){
+                    ctx.beginPath();
+                    ctx.strokeStyle=pozycja[i].kolor;
+                    ctx.lineWidth=2;
+                    ctx.moveTo(pozycja[i].x,pozycja[i].y)    
+                    pozycja[i].rad=pozycja[i].kat * Math.PI / 180;
+                    pozycja[i].dlx=pozycja[i].promien*(Math.cos(pozycja[i].rad))
+                    pozycja[i].dly=pozycja[i].promien*(Math.sin(pozycja[i].rad))
+                    pozycja[i].x+=pozycja[i].dlx;
+                    pozycja[i].y+=pozycja[i].dly;  
+                    ctx.lineTo(pozycja[i].x,pozycja[i].y);	
+                    ctx.stroke();
+                    ctx.closePath();
+                    
+                    sprawdzanie(pozycja[i].x,pozycja[i].y,i) 
+                    if(pozycja[i].status==0){                        
+                        pozycja[i].promien=0
+                    }
+                }
+                if(pamiec.klawisz_a==1 && pozycja[0].status==1)
+                    pozycja[0].kat-=0.8
+				if(pamiec.klawisz_h==1  && pozycja[1].status==1)
+					pozycja[1].kat-=0.8 
+                if(pamiec.srednik==1  && pozycja[2].status==1)
+					pozycja[2].kat-=0.8
+                if(pamiec.num==1  && pozycja[3].status==1)
+					pozycja[3].kat-=0.8   
+                    
+                for(var i=0;i<liczba_graczy;i++){
+                    document.getElementById("mt"+i).style.left=(pozycja[i].x-9)+"px"
+                    document.getElementById("mt"+i).style.top=(pozycja[i].y-2)+"px"
+                    document.getElementById("mt"+i).style.transform = "rotate("+pozycja[i].kat+"deg)";   
+                    document.getElementById("okr"+i).textContent=pozycja[i].okr      
+                    if(pozycja[i].okr==l_okr){
+                       // alert("Wygrał "+pozycja[i].kolor2)
+                        clearInterval(animacja)
+                        var dv=document.createElement("div")
+            dv.className="log"
+            dv.textContent=">>Wygrał "+pozycja[i].kolor2
+            document.getElementById("logi").appendChild(dv)
+                    }
+                }
+            },10)
+
+            function sprawdzanie(x,y,i){  
+               var polekol=[],sr=[]
+                sr[0]=[Math.pow(200,2)]
+                sr[1]=[Math.pow(70,2)]
+                sr[2]=[Math.pow(200,2)]
+                sr[3]=[Math.pow(70,2)]
+                polekol[0]=((Math.pow(x-601, 2))+((Math.pow(y-200, 2))))
+                polekol[1]=((Math.pow(x-601, 2))+((Math.pow(y-200, 2))))
+                polekol[2]=((Math.pow(x-200, 2))+((Math.pow(y-200, 2))))
+                polekol[3]=((Math.pow(x-200, 2))+((Math.pow(y-200, 2))))
+                
+                if(x>601){  
+                    if(sr[0]>polekol[0] && sr[1]<polekol[1])
+                        pozycja[i].status=1
+                    else
+                        pozycja[i].status=0
+                }else if ((x>201 &&x<601) && y<200){
+                    if(y>0 && y<130)
+                        pozycja[i].status=1
+                    else
+                        pozycja[i].status=0
+                        
+                    if(x>=300 && x<=301.5)
+                        pozycja[i].czp++
+                }else if ((x>201 &&x<601) && y>200){
+                    if(y>270 && y<401)
+                        pozycja[i].status=1    
+                    else
+                        pozycja[i].status=0 
+                    
+                    if(x>=497 && x<=498.5 && pozycja[i].czp==1){
+                        pozycja[i].czp=0
+                        pozycja[i].okr++
+                    }
+                }                   
+                else if(x<200){
+                    if(sr[2]>polekol[2] && sr[3]<polekol[3])
+                        pozycja[i].status=1 
+                    else
+                        pozycja[i].status=0
+                }
+                
+            }
+            document.body.onkeydown=function(e){ 
+                if(e.which==65 || e.which==97){
+                    pamiec.klawisz_a=1 
+                }else if(e.which==104 || e.which==72){
+                    pamiec.klawisz_h=1
+                }else if(e.which==59){
+                    pamiec.srednik=1
+                }else if(e.which==101){
+                    pamiec.num=1
+                }
+            }
+           
+            document.body.onkeyup=function(e){
+                if(e.which==65 || e.which==97){
+                    pamiec.klawisz_a=0
+                }else if(e.which==104 || e.which==72){
+                    pamiec.klawisz_h=0
+                }else if(e.which==59){
+                    pamiec.srednik=0
+                }else if(e.which==101){
+                    pamiec.num=0
+                }
+            }
+
+        }
+        </script>
+        <style>
+            body{
+                background-color: darkorange;
+            }
+            #poj{
+                width: 620px;
+                margin: 0 auto;
+            }
+            #cvs{
+                position: absolute;
+                top:0vh;
+                left:20vw;
+            }
+            #cvs2{
+                position: absolute;
+                top:0vh;
+                left:20vw;
+            }
+            #blok{
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left:0;
+                height: 60vh;
+            }
+            #motorki{
+                position: relative;
+                width: 801px;
+                height: 401px;
+                top:0vh;
+                left:20vw;
+                border: 1px red solid
+            }
+            .motory{
+                position: absolute;
+            }
+            #logi{
+                width: 350px;
+                font-size: 25px;
+            }
+            .log{
+                background-color: orangered;
+                width: 350px;
+                font-size: 25px;
+                padding-top: 3px; 
+            }
+            td{
+                border: 1px black solid;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="poj">
+            <canvas id="cvs" width="801" height="401" style="border: 1px black solid;"></canvas>
+           <div id="blok"><div id="motorki"></div></div>
+        </div>
+        <div id="sterowanie">Sterowanie:
+            <p>Gracz czerwony - A</p>
+            <p>Gracz zielony - H</p>
+            <p>Gracz niebieski - ;(Średnik)</p>
+            <p>Gracz morski - NUM5</p>
+            <div id="logi"></div>
+            <table>
+                <tr>
+                    <td>Gracz</td>
+                    <td >Okrążenie</td>
+                </tr>
+                <tr>
+                    <td>Czerwony</td>
+                    <td id="okr0">NaN</td>
+                </tr>
+                <tr>
+                    <td>Zielony</td>
+                    <td id="okr1">NaN</td>
+                </tr>
+                <tr>
+                    <td>Niebieski</td>
+                    <td id="okr2" >NaN</td>
+                </tr>
+                <tr>
+                    <td>Morski</td>
+                    <td id="okr3" >NaN</td>
+                </tr>
+            </table>
+        </div>
+        <div id="start-przycisk"></div>
+    </body>
+</html>

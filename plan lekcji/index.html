@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Plan lekcji</title>
+    
+    <meta charset="UTF-8" />
+
+    <script src="libs/jquery-3.1.0.min.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/content-main-page.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/ajax.js"></script>
+    <script src="js/loging.js"></script>
+    <script>
+        $(document).ready(function () {
+            UI.init()
+            Contentmainpage.init()
+            UI.generacion.picker_godziny();
+            Loging.caph();
+            UI.generacion.kolory();
+        })
+    </script>
+
+    <link href="css/ui.css" rel="stylesheet" />
+    <link href="css/menu.css" rel="stylesheet" />
+    <link href="css/weekSheet.css" rel="stylesheet" />
+    <link href="css/content-main-page.css" rel="stylesheet" />
+    <link href="css/database.css" rel="stylesheet" />
+    <link href="css/menu-phones.css" rel="stylesheet" />
+    <link href="css/changeScreen.css" rel="stylesheet" />
+    <link href="css/loging.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div id="main">
+        <div id="content">
+            <img id="main-menu-v2" src="gfx/menu.png" class="menu-icon" alt="main-menu" />
+            <img id="main-menu-v2-close" src="gfx/menu.png" class="menu-icon" alt="main-menu" />
+
+            <div id="content-page">
+                <div id="content-content-page">
+                    <div id="clock"></div>
+                    <div id="text">
+                        <div id="now">Teraz: <span id="nowT">j.polski </span><span id="nowS">sala 109</span></div>
+                        <div id="next">Za chwilę: <span id="nextT">matematyka </span><span id="nextS">sala 215</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="menu">
+                <div class="me" id="settings"><p class="m-text" id="m-text1">Ustawienia</p><img src="gfx/settings.png" alt="ustawienia"/></div>
+                <div class="me" id="today"><p class="m-text" id="m-text2" >Dziś</p><img src="gfx/today.png" alt="today" /></div>
+                <div class="me" id="week"><p class="m-text" id="m-text3">Tydzień</p><img src="gfx/week.png" alt="week" /></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu-v2">
+        <div id="menu-v2-cont">
+            <div class="me2" id="settings-v2"><p class="mv2-text" id="mv2-text1">Ustawienia</p><img src="gfx/settings.png" alt="ustawienia"/></div>
+            <div class="me2" id="today-v2"><p class="mv2-text" id="mv2-text2" >Dziś</p><img src="gfx/today.png" alt="today" /></div>
+            <div class="me2" id="week-v2"><p class="mv2-text" id="mv2-text3">Tydzień</p><img src="gfx/week.png" alt="week" /></div>
+        </div>
+    </div>
+    
+    <div id="screens">
+        <div class="screen" id="settingsScreen">
+            <img id="menusett" src="gfx/menu.png" class="menu-icon" alt="menusett" />
+            <div id="settingsMenu">
+                <div class="ms2" id="settHours"><p class="sett-ms2">Godziny</p><img src="gfx/clock.png" /></div>
+                <div class="ms2" id="settColors"><p class="sett-ms2">Kolory</p><img src="gfx/colors.png" /></div>
+                <div class="ms2" id="settMainPage"><p class="sett-ms2">Ekran startowy</p><img src="gfx/home.png" /></div>
+                <div class="ms2" id="settDatabase"><p class="sett-ms2">Baza danych</p><img src="gfx/database.png" /></div>
+            </div>
+        </div>
+        <div class="screen" id="todayScreen">
+            <img id="menutoday" src="gfx/menu.png"  class="menu-icon" alt="menutoday" />
+            <div id="screen-content"></div>
+        </div>
+        <div class="screen" id="weekScreen">
+            <img id="menuweek" src="gfx/menu.png" class="menu-icon" alt="menuweek" />
+            <div id="week-content"></div>
+        </div>
+
+        <div class="screen" id="settingsScreenv2">
+            <img id="menusettv2" src="gfx/menu.png" class="menu-icon" alt="menusett" />
+            <div id="settingsMenu-v2">
+                <div class="ms2-v2" ><p class="sett-ms2-v2">Godziny</p><img src="gfx/clock.png" /></div>
+                <div class="ms2-v2" ><p class="sett-ms2-v2">Kolory</p><img src="gfx/colors.png" /></div>
+                <div class="ms2-v2" ><p class="sett-ms2-v2">Ekran startowy</p><img src="gfx/home.png" /></div>
+                <div class="ms2-v2" ><p class="sett-ms2-v2">Baza danych</p><img src="gfx/database.png" /></div>
+            </div>
+        </div>
+
+        <div class="screen" id="colorsScreen">
+            <img id="menuColor" src="gfx/menu.png" class="menu-icon" alt="menusett" />
+            <div id="kolory-napisy">
+                <p>Kolor tła</p>
+                <p id="kn-sr">Kolor głowny</p>
+                <p>Kolor dodatkowy</p>
+            </div>
+
+            <div id="kolory-poj">
+                <div id="kolory-tla" class="kolory"></div>
+                <div id="kolory-glowne" class="kolory"></div>
+                <div id="kolory-dodatkowe" class="kolory"></div>
+            </div>
+            <div id="zapis">Zapisz kolory</div>
+        </div>
+
+        <div class="screen" id="databaseScreen">
+            <img id="menudatabase" src="gfx/menu.png" class="menu-icon" alt="menudatabase" />
+            <div id="databasemenu-context">
+                <div class="db" id="dbAddTable"><p class="p-menu-database">Dodaj Tabelę</p><img class="icon-base" src="gfx/basemanu/addtable.png" /></div>
+                <div class="db" id="dbRemoveTable"><p class="p-menu-database">Usuń Tabelę</p><img class="icon-base" src="gfx/basemanu/delltable.png" /></div>
+                <div class="db" id="dbAddData"><p class="p-menu-database">Dodaj Dane</p><img class="icon-base" src="gfx/basemanu/adddata.png" /></div>
+                <div class="db" id="dbRemoveData"><p class="p-menu-database">Usuń Dane</p><img class="icon-base"  src="gfx/basemanu/delldata.png" /></div>
+                <div class="db" id="dbDownloadData"><p class="p-menu-database">Pobierz Dane</p><img class="icon-base" src="gfx/basemanu/pobierz.png" /></div>
+            </div>
+        </div>
+        
+        <div class="screen" id="hoursScreen">
+            <img id="menuhours" src="gfx/menu.png" class="menu-icon" alt="menuhours" />
+            <div id="hours-context"></div>
+        </div>
+
+        <div class="screen" id="changeScreen">
+            <div id="checkpanel">
+                <img id="accept" alt="accept" src="gfx/change/accept.png" />
+                <img id="deny" alt="deny" src="gfx/change/deny.png" />
+            </div>
+            <div id="hourChange">
+                <div id="hourHeader"><div id="hours">11</div>:<div id="minutes">11</div></div>
+                <div id="hourContent">
+                    <div id="hourContent-Hours"></div>
+                    <div id="hourContent-Minutes"></div>
+                </div>
+                <div id="dataP"></div>
+                <div id="dataI"></div>
+            </div>
+        </div>
+
+      <div class="screen" id="captchaScreen">
+         <div id="CAPnapis"></div>
+            <div id="panelCap"></div>
+            <div id="refH" ><img src="gfx/captcha/refresh.png" alt="refresh" /></div> 
+              <div id="logowanie">
+                <form>
+                    <label>Login: <input type="text" id="login-text" /></label>
+                    <label>Hasło: <input type="text" id="login-passwd" /></label>
+                    <input type="button" value="Wyślij" id="logIN" />
+                </form>
+            </div>
+        </div>
+           
+
+        <div class="screen" id="alert">
+            <div id="alertContent">Tekst</div>
+        </div>
+    </div>
+
+</body>
+</html>

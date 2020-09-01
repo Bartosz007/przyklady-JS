@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    window.onload= function(){
+        function loadDoc() {
+            var xhttp = new XMLHttpRequest()  
+            xhttp.onreadystatechange = function() {
+                if (this.readyState  ==  4 && this.status == 200) {
+                    //ff                    
+					generuj(this.responseText)
+                }
+            }
+			alert("zadana strona jest martwa //BK 2020");
+            xhttp.open("POST", "http://zck.krakow.pl/?pageId=16", true); 
+            xhttp.setRequestHeader('Content-Type','application/json');
+            xhttp.send();
+        }
+        
+        loadDoc()
+		var tab2 =[]
+		var wyn2
+        function generuj(data){		
+			var text = data
+            var reg = /cmentarz .*\</gi
+            var wyn = text.match(reg)
+            document.getElementById("cmentarz").innerHTML="<option value=-1>Wybierz cmentarz</option>"
+			
+            for(var i =0;i<wyn.length;i++){
+                var ot = "<option value="+i+"> "+wyn[i]+"/option"
+                document.getElementById("cmentarz").innerHTML+=ot
+            }
+			
+			var tb=[]
+			var l1 =0
+			var l2 = 0
+			for(var i =0;i<data.length;i++){
+				if(data[i] =="<" && data[i+1] =="t" && data[i+2] =="a" && data[i+3] =="b" && data[i+4] =="l"){
+					tab2[l1]=[]
+				}
+				
+				if(data[i] =="<" && data[i+1] =="t" && data[i+2] =="r"){
+					tab2[l1].push(l2)
+					l2++
+				}
+				
+				if(data[i] =="<" && data[i+1] =="/" && data[i+2] =="t" && data[i+3] =="a" && data[i+4] =="b" && data[i+5] =="l"){
+					l1++
+				}
+			}
+			tab2.pop();
+			tab2[-1]=""
+			
+			var text = data
+            var reg2 = /\<tr(.*\w.*\s){4}\s.*\<\/tr\>/ig
+            wyn2 = text.match(reg2)
+			
+        }
+		
+		document.getElementById("cmentarz").onchange=function(){
+			var kod=""
+			console.log(wyn2)
+			for(var i =0;i<tab2[this.value].length;i++){
+				kod+=wyn2[tab2[this.value][i]]			
+			}
+			kod = "<table>"+kod+"</table>"
+			
+			document.getElementById("tabelka").innerHTML=kod
+		}
+    }
+	//         .*\<table\>[\s\S]*\<\/table\>
+	
+</script>
+<style>
+
+
+#cont{
+	width:300px;
+	margin:0 auto;
+	height:200px;
+	text-align:center;
+}
+.middle,.lefttop,.righttop,.rightbottom,.leftbottom{
+padding:5px;
+background-color:#7D7E6C;
+}
+td{
+	border:2px black solid;
+}
+
+</style>
+</head>
+
+<body>
+<div id="cont">	
+	<select id="cmentarz">		
+	</select>
+	<div id="tabelka">
+	</div>
+</div>
+
+
+</body>
+</html>

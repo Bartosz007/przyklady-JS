@@ -1,0 +1,657 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>puzzle</title>
+        <script>
+        window.onload=function(){
+            
+            //-------------------------------funkcje------------------
+            
+            var wielkosc,wielkoscST,czasS
+            var stacja=[],tabpol=[]
+            var stan=false,muu=false
+            var cyc=0
+            
+            function gen(){//f. generacja planszy
+                
+                clear()
+                
+                wielkosc=parseInt(this.value)
+                if(muu){
+                    for(var i=0;i<(wielkoscST*wielkoscST);i++){
+                        var se=document.getElementById("blok"+i)
+                        se.remove()
+                        stacja=[]
+                    }
+                }
+                wielkoscST=wielkosc
+                
+                for(var i=0;i<(wielkosc*wielkosc);i++)
+                        tabpol[i]=0
+                                
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    var dv=document.createElement("div")
+                    
+                    wys=(501/wielkosc)
+                    szer=(501/wielkosc)
+                    dv.style.width=wys+"px"
+                    dv.style.height=szer+"px"
+                    dv.className="bloki"
+                    dv.id="blok"+i
+                    
+                    
+                   /*  ******************losowanie*********************
+                    do{
+                        var x = Math.floor((Math.random() * (wielkosc*wielkosc)))
+                        if(tabpol[x]==0){
+                            stan=true
+                            tabpol[x]=1
+                        }
+                    }while(!stan)
+                        
+                    stan=false
+                    */
+                    
+                    stacja[i]=dv                    
+                }
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    puzzle.appendChild(stacja[i])
+                }
+                
+                var a=0,b=szer,c=wys,d=0
+                var rosm=[]
+                var kj=0
+                    
+                for(var i=0;i<(wielkosc*wielkosc)-1;i++){
+                var ig=document.createElement("img")
+                var dv = document.getElementById("blok" + i)
+
+                ig.src = obSRC
+                ig.alt = "br"
+                ig.className = "puz"
+                ig.id = "br" + i
+                ig.onclick = click;
+                dv.appendChild(ig)
+
+                if (kj == wielkosc) {
+                    a = a + wys
+                    c = c + wys
+                    b = szer
+                    d = 0
+                    kj = 0
+                }
+                rosm.push({
+                    a: a,
+                    b: b,
+                    c: c,
+                    d: d,
+                })
+                b = b + szer
+                d = d + szer
+                kj++
+                }
+
+                for (var i = 0; i < (wielkosc * wielkosc) - 1; i++) {
+                    var se = document.getElementById("br" + i)
+                    se.style.clip="rect("+rosm[i].a+"px,"+rosm[i].b+"px,"+rosm[i].c+"px,"+rosm[i].d+"px)"
+                    se.style.left ="-"+rosm[i].d+"px" 
+                    se.style.top ="-"+rosm[i].a+"px"
+                }
+                muu=true
+                
+                var pr=(wielkosc*wielkosc*20)
+                var ost=document.getElementById("blok"+((wielkosc*wielkosc)-1))
+                rozstawianie(pr,ost) //wywoałanie funkcji rozstawainia
+                
+            }
+            var tas,lks=0
+            function rozstawianie(t,d){//f rozstawiajaca
+                
+                var st= d
+                tas =setInterval(function(){
+                    if(lks<t){
+                        
+                        var index=stacja.indexOf(st)
+                        var mo=stacja[index]
+                        var los=Math.floor(Math.random() * 4)
+                        
+                        if(los==0){
+                            if(((index)%wielkosc!=0)){
+                                var mo0=stacja[index-1]
+                                tasowanie(mo0,mo)
+                            }
+                        }
+                        if(los==1){
+                            if(((index+1)%wielkosc!=0)){
+                                var mo1=stacja[index+1]
+                                tasowanie(mo1,mo)
+                            }
+                        }
+                        if(los==2){
+                            if(index<((wielkosc*(wielkosc-1)))){
+                                var mo2=stacja[index+wielkosc]
+                                tasowanie(mo2,mo)
+                            }
+                        }  
+                        if(los==3){ 
+                            if(index>(wielkosc-1)){
+                                var mo3=stacja[index-wielkosc]
+                                tasowanie(mo3,mo)
+                            }     
+                        }
+                        lks++
+                        
+                    }
+                    
+                    else{
+                        clearInterval(tas)
+                    }
+                
+                },1)
+                
+            }
+            
+            function tasowanie(zajety,pusty){//f tasująca
+                
+                var pst=stacja.indexOf(zajety)
+                var zaj=stacja.indexOf(pusty)
+                var zapas=zajety
+                stacja[pst]=pusty
+                stacja[zaj]=zapas
+               
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    var se=document.getElementById("blok"+i)
+                    se.remove()
+                }
+                
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    puzzle.appendChild(stacja[i])
+                }
+               
+            }
+            
+            function click(){//f. sprawdzenia warunku zmiany obrazków
+                
+                var st= this.parentNode
+                var index=stacja.indexOf(st)
+                var mo=stacja[index]
+                if(((index)%wielkosc!=0)){
+                    var mo0=stacja[index-1]
+                    if(mo0.innerHTML==""){
+                        zmiana(mo0,mo);
+                    }
+                }
+                if(((index+1)%wielkosc!=0)){
+                    var mo1=stacja[index+1]
+                    if(mo1.innerHTML==""){
+                        zmiana(mo1,mo);
+                    }
+                }
+                if(index<((wielkosc*(wielkosc-1)))){
+                    var mo2=stacja[index+wielkosc]
+                    if(mo2.innerHTML==""){
+                        zmiana(mo2,mo);
+                    }
+                }
+                if(index>(wielkosc-1)){ 
+                    var mo3=stacja[index-wielkosc]
+                    if(mo3.innerHTML==""){
+                        zmiana(mo3,mo);
+                    }
+                } 
+            }
+            
+            var el=0,ml=0
+            function zmiana(pusty,zajety){//f. zmiany obrazków
+                var pst=stacja.indexOf(pusty)
+                var zaj=stacja.indexOf(zajety)
+                var zapas=pusty
+                stacja[pst]=zajety
+                stacja[zaj]=zapas
+               
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    var se=document.getElementById("blok"+i)
+                    se.remove()
+                }
+                
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    puzzle.appendChild(stacja[i])
+                }
+                
+                for(var i=0;i<(wielkosc*wielkosc);i++){
+                    var idk=parseInt(stacja[i].id.substr(4))
+                    if(i!=idk)
+                        el++
+                }
+                
+                if(el==0){
+                    confirm("Wygrałes!!, twój czas to: "+czasS)
+                    
+                    addcookie(wielkosc,czasS)
+                    clear()
+                    window.location.reload()
+                
+                }
+                
+                el=0
+                if(ml==0) timer()
+                ml=1
+            }
+            
+            var ms=0
+            var licz
+            function timer(){//f. licznik
+                licz=setInterval(function (){
+                    document.getElementById("licznik").innerHTML=null
+                    var data=new Date() 
+                    data.setHours(0)
+                    data.setMinutes(0)
+                    data.setSeconds(0)
+                    data.setMilliseconds(cyc)
+                    cyc=cyc+4
+                    
+                    godz=data.toLocaleTimeString()
+                    ms=data.getMilliseconds()
+                    
+                    if(ms<10){
+                        ms="0"+ms
+                    }
+                    if(ms<100){
+                        ms="0"+ms
+                    }
+                    
+                    var czas=godz+":"+ms
+                    czasS=czas
+                    
+                    czas=czas.replace(":","")
+                    czas=czas.replace(":","")
+                    czas=czas.replace(":","")
+                    
+                    for(var i=0;i<czas.length;i++){
+                        var se=document.getElementById("licznik")
+                        
+                        if(i==2||i==4){
+                            var znak=document.createElement("img")
+                            znak.alt="lk?"
+                            znak.id="lpm"+i
+                            znak.src="gphx/colon.gif"
+                            se.appendChild(znak)
+                        }else if(i==6){
+                            var znak=document.createElement("img")
+                            znak.alt="lk?"
+                            znak.id="lpm"+i
+                            znak.src="gphx/dot.gif"
+                            se.appendChild(znak)
+                        }
+                        
+                        var cyfry =document.createElement("img")
+                        cyfry.className="obsh"
+                        cyfry.alt="e?"
+                        cyfry.id="ikm"+i
+                        var path="gphx/c"+czas[i]+".gif"
+                        cyfry.src=path
+                        se.appendChild(cyfry)
+                    }
+                },10)
+            }
+            
+            var tas
+            function addcookie(aa,bb){//f.dodająca cookie
+                var tabck =document.cookie.split('; ')
+                tabck=tabck.sort()
+                for(var i=0;i<tabck.length;i++){
+                    if(tabck[i][0]==aa){
+                       tas=i
+                    }
+                }
+				var k = new Date();
+                    k.setTime(k.getTime()+1000*60*60*5000000)
+                    
+                tabck[tas]=tabck[tas]+bb+",;expires="+k
+                document.cookie=tabck[tas]
+            }
+
+            var obrazek = 1
+            var obSRC = "img/b" + obrazek + ".jpg"
+            function change(){//f.wywołująca zmiane obrazka
+                var akt=document.getElementById("pojemnik").scrollLeft
+                
+                if (akt % 250 == 0) {
+                    if (this.id == "right-arrow") {
+
+                        var tse = "right"
+                        if (akt != 750) {
+                            obrazek++
+                            obSRC = "img/b" + obrazek + ".jpg"
+                            przesuwanie(tse);
+                        } else {
+                            document.getElementById("pojemnik").scrollLeft = 0
+                            obrazek = 2
+                            obSRC = "img/b" + obrazek + ".jpg"
+                            przesuwanie(tse);
+                        }
+
+                    } else {
+                        var tse="left"
+                        if (akt != 0) {
+                            obrazek--
+                            obSRC = "img/b" + obrazek + ".jpg"
+                            przesuwanie(tse);
+                        } else {
+                            document.getElementById("pojemnik").scrollLeft = 750
+                            obrazek = 3
+                            obSRC = "img/b" + obrazek + ".jpg"
+                            przesuwanie(tse);
+                        }
+                    }
+                }
+            }
+
+            function przesuwanie(aaa) {//animacja przesuwania
+
+                var licznikP = 0
+
+                ttt = setInterval(function () {
+                    if (aaa == "right") {
+                        if (licznikP < 100) {
+                            document.getElementById("pojemnik").scrollLeft += 2
+                            licznikP++
+                        } else {
+                            clearInterval(ttt)
+                        }
+                    } else {
+                        if (licznikP < 100) {
+                            document.getElementById("pojemnik").scrollLeft -= 2
+                            licznikP++
+                        } else {
+                            clearInterval(ttt)
+                        }
+                    }
+                },2)
+            }
+            
+            function clear(){//f. zerująca
+                cyc=0,ml=0,lks=0
+                clearInterval(licz)
+                licz=null
+                document.getElementById("licznik").innerHTML=null
+            } 
+                        
+            //------------------------------------------------------generwanie---elementów-----strony---------------------------
+            //---------------------------miniaturka----------------------------------
+            var gra=document.createElement("div")
+            gra.id="gra"
+            
+            var pojemnik=document.createElement("div")
+            pojemnik.id="pojemnik"
+            var show=document.createElement("div")
+            show.id="show"
+            pojemnik.appendChild(show)
+            
+            for(var i=0;i<3;i++){
+                var img=document.createElement("img");
+                img.src="img/b"+(i+1)+".jpg"
+                img.alt="bear"
+                img.className = "misie"
+                img.id="b"+(i+1)
+                show.appendChild(img)
+            }
+            var img = document.createElement("img");
+            img.src = "img/b1.jpg"
+            img.alt = "bear"
+            img.className = "misie"
+
+            img.id = "b4"
+            show.appendChild(img)
+            //-----------------------przyciski+generacja planszy-----------------------------------------
+            var lista = document.createElement("div")
+            lista.id="menu"
+            document.body.appendChild(lista)
+            for(var i=0;i<4;i++){
+                var bt=document.createElement("button")
+                var txt=document.createTextNode((i+3)+"x"+(i+3))
+                bt.appendChild(txt)
+                bt.value=(i+3)
+                bt.id="przyc"+i
+                bt.className="przyciski"
+                lista.appendChild(bt)
+            }
+            gra.appendChild(lista)
+            
+            var puzzle =document.createElement("div")
+            puzzle.id="plansza"
+            
+            gra.appendChild(pojemnik)
+            gra.appendChild(puzzle)
+            document.body.appendChild(gra)
+            
+            var licznik=document.createElement("div")
+            licznik.id="licznik"
+            gra.appendChild(licznik)
+            //---------------------------------strzałki----------------------
+            var img=document.createElement("img");
+            img.src="left.png"
+            img.alt="left"
+            img.id="left-arrow"
+            gra.appendChild(img)
+            var img=document.createElement("img");
+            img.src="right.png"
+            img.alt="right"
+            img.id="right-arrow"
+            gra.appendChild(img)
+            
+            //------------------------tablica i cookie------------------------
+			var butwyn =document.createElement("div")
+			butwyn.id="wynikiButton"
+			var text =document.createTextNode("Wyniki"); 
+			butwyn.appendChild(text)
+			document.body.appendChild(butwyn)
+			
+			var wyniki =document.createElement("div")
+			wyniki.id="tablicawynikow"
+			document.body.appendChild(wyniki)
+			var wynpoj=document.createElement("div")
+			wynpoj.id="wynpoj"
+			wyniki.appendChild(wynpoj)
+            
+            if(document.cookie==""){
+                for(var i=0;i<4;i++){
+                    var k = new Date();
+                    k.setTime(k.getTime()+1000*60*60*5000000)
+                    document.cookie=(i+3)+"=;expires="+k
+                }     
+            }
+            
+            var te=document.cookie.split('; ')
+            var tek=[]
+            for(var i=0;i<4;i++){
+                te[i]=te[i].replace((i+3)+"=","")
+                tek[i]=te[i].split(",")
+                tek[i]=tek[i].sort()
+                tek[i].shift()
+            }
+            
+			for(var i=0;i<4;i++){
+                
+				var kol=document.createElement("div")
+				kol.id="kol"+i
+				kol.className="kolumny"
+				kol.style.backgroundColor="#ff"+(3*i)+i+"00"
+                
+                var ce=(i+3)+"x"+(i+3)
+                var wiersz=document.createElement("div")
+                var text =document.createTextNode(ce);
+                wiersz.appendChild(text)
+                wiersz.id="naglowek_"+i
+                wiersz.className="nagloweki"
+                kol.appendChild(wiersz)
+                
+				for(var j=0;j<10;j++){
+					var wiersz=document.createElement("div")
+					wiersz.id="wiersz_"+i+"_"+j
+					wiersz.className="wiersze"
+                    if(j<tek[i].length){
+                        var txt=document.createTextNode(tek[i][j]);
+                        wiersz.appendChild(txt)
+                    }
+                    
+					kol.appendChild(wiersz)
+				}
+                wynpoj.appendChild(kol)
+			}
+            
+            //--------------------------------wywoływanie----przycisków-----------------------------
+            
+            for(var i=0;i<4;i++){//uruchomienie przycisków
+                document.querySelectorAll(".przyciski")[i].onclick=gen;
+            }
+            
+			
+			document.getElementById("wynikiButton").onclick=function(){
+				document.getElementById("tablicawynikow").style.display="block"
+				document.getElementById("wynikiButton").style.display="none"
+			};
+			document.getElementById("tablicawynikow").onclick=function(){
+				document.getElementById("tablicawynikow").style.display="none"
+				document.getElementById("wynikiButton").style.display="block"
+			};
+			document.getElementById("left-arrow").onclick=change;
+            document.getElementById("right-arrow").onclick=change;
+            
+            document.getElementById("pojemnik").scrollLeft=0;
+            
+        }
+        </script>
+        <style>
+            .puz{
+                position: absolute;
+                left:0px;
+                clip:initial;
+            }
+            body{
+                background-image: url("tlo.jpeg");
+                overflow: auto;
+            }
+            #gra{
+                margin: 0 auto;
+                width: 960px;
+                position: relative;
+            }
+            #pojemnik{
+                margin: 0 auto;
+                height: 250px;
+                width: 250px;
+                overflow:hidden;
+            }
+            #menu{
+                height: 25px;
+                width: 270px;
+                position: absolute;
+                top:30%;
+                left:36.5%;
+            }
+            .przyciski{
+                margin-top: 4px;
+                height: 25px;
+                width: 65px;
+                display: inline-block;
+            }
+            #plansza{
+                margin: 0 auto;
+                margin-top: 60px;
+                background-color: chocolate;
+                width: 501px;
+                height: 501px;
+                overflow: hidden;
+            }
+            .bloki{
+                background-color: dodgerblue;
+                float:left;
+                margin: 0px;
+                padding: 0px;
+                position: relative;
+            }
+            #licznik{
+                width: 400px;
+                height: 50px;
+                margin: 0 auto;
+                margin-top: 10px;
+                text-align :center;
+            }
+			#tablicawynikow{
+				width:100%;
+				height:100%;
+				position:absolute;
+				background-color:rgba(0,0,0,0.8);
+				left:0;
+				top:0;
+                display: none;
+			}
+			#wynikiButton{
+				width: 130px;
+                height: 30px;
+				border:2px black solid;
+				border-radius:3px;
+				font-size:25px;
+                background-color: white;
+				font-variant:small-caps;
+				position:absolute;
+				left:150px;
+				top:50%;
+				text-align:center;
+				cursor:pointer;
+			}
+			#wynpoj{
+				width:70%;
+				height:80%;
+				margin:0 auto;
+				margin-top:6%;
+			}
+			.kolumny{
+				width:24%;
+				height:100%;
+				float:left;
+				border-left:2px solid black;
+				border-right:2px solid black;
+			}
+			.wiersze{
+				width:100%;
+				height:8.8%;
+				border-bottom:2px black dotted;
+                text-align:center;
+				font-size:200%;
+			}
+			.nagloweki{
+				width:100%;
+				height:8.8%;
+				background-color:dodgerblue;
+				border-bottom:2px black solid;
+				text-align:center;
+				font-size:300%;
+			}
+            #left-arrow{
+                position: absolute;
+                left:21%;
+                top:10%;
+                cursor: pointer;
+            }
+            #right-arrow{
+                position: absolute;
+                left: 66%;
+                top:10%;
+                cursor: pointer;
+            }
+            #show{
+                width: 1000px;
+            }
+            .misie{
+                float: left;
+                width: 250px;
+                height: 250px;
+            }
+        </style>
+    </head>
+    <body>
+    </body>
+</html>

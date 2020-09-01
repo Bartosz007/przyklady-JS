@@ -1,0 +1,128 @@
+@font-face {
+    font-family: Abril;
+    src: url('../fonts/PressStart2P.ttf') format('truetype');
+}
+#pojemnik{
+    width: 540px;
+    height: 330px;
+    background-color: rgb(57,57,57);
+}
+#pozycja {
+    padding:6px;
+    font-family:Abril;
+    color:rgb(165,162,178);
+    font-size:13px;
+}
+#obraz {
+    margin-left:8px;
+    width:260px;
+    height:163px;
+    border:2px white solid;
+}
+#image {
+    width:260px;  
+}
+.napis {
+    padding:6px;
+    font-family:Abril;
+    color:rgb(165,162,178);
+    font-size:13px;
+}
+#dv_wejscie{
+    font-family:Abril;
+    color:rgb(165,162,178);
+    font-size:13px;
+    padding:8px;
+    padding-top:20px;
+}
+#wejscie{
+    background-color:rgb(57,57,57);
+    color:rgb(165,162,178);
+    border:0px;
+    font-family:Abril;
+    margin-left:10px;
+}
+#wejscie:focus {
+    border:0px;
+}
+#messg{
+    position: absolute;
+    display: none;
+    left:16px;
+    top:307px;
+    background-color: rgb(57,57,57);
+    font-family:Abril;
+    color:rgb(165,162,178);
+    font-size:13px;
+    width: 524px;
+    height: 16.4px;
+}
+#kompas_dv{
+    width: 250px;
+    position: absolute;
+    left:295px;
+    top:50px;
+}
+#kompas{
+    width: 240px;
+    height: 140px;
+}
+.pozycjee{
+    color: rgb(165,162,178);
+    font-family:Abril;
+    font-size:13px;
+}
+#p0{
+    position:absolute;
+    top:2px;
+    left:108px;
+}
+#p1{
+    position:absolute;
+    top:41px;
+    right:25px;
+}
+#p2{
+    position:absolute;
+    top:122px;
+    left:112px;
+}
+#p3{
+    position:absolute;
+    top:41px;
+    left:12px;
+}
+#screeny{
+    position: absolute;
+    left:8px;
+    top:8px;
+    width: 80vw;
+    height: 80vh;
+    z-index: 100;
+}
+#screen{
+    width: 540px;
+    height: 330px;    
+}
+#gps{
+    width: 524px;
+    height: 120px;
+    position: absolute;
+    left:15px;
+    top:210px;
+    display: none;
+}
+#goss,#voc{
+    position: absolute;
+    top:0;
+    width: 524px;
+    height: 120px;
+    background-color:rgb(57,57,57);
+    display: none;
+}
+p{
+    margin: 0;
+    color: rgb(165,162,178);
+    font-family:Abril;
+    font-size:13px;
+}

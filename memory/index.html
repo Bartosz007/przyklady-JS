@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html ng-app="aplikacja">
+<meta charset="utf-8"/>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+<script>    
+    var app = angular.module('aplikacja', ["ngRoute"]);
+
+    
+    app.config(function($routeProvider,$locationProvider) {
+        $routeProvider.when('/tryb/30', {
+            controller: 'gameController',
+            templateUrl: 'game.html'
+        })
+        .when('/tryb/60', {
+            controller: 'gameController',
+            templateUrl: 'game.html'
+        })
+        .when('/tryb/90', {
+            controller: 'gameController',
+            templateUrl: 'game.html'
+        })
+        .when("/", {
+            templateUrl : "main.html"
+        })
+        .otherwise({
+            redirectTo : "/"
+        });
+        
+    });  
+    
+    app.controller('gameController', function($scope, $routeParams, $timeout, $interval, $location) {
+        
+        $scope.hide=0;        
+        
+        $scope.logoOut = function(){
+            $scope.hide=1;
+        }   
+        
+        $scope.name = 'gameController';
+        
+        var loc=$location.path();
+        
+        $scope.loc = loc.substr(loc.length-2)
+        
+        $scope.parametry = $routeParams;                
+        
+        $scope.array=[];        
+        $scope.mieszanie=[];
+        $scope.startarray=[];        
+        
+        for(var i=1;i<9;i++){
+            for(var j=0;j<2;j++){
+                $scope.mieszanie.push(i);
+            }            
+        }
+        
+        var arraychCheck=[];
+        var pary=0;
+        var zwolnenie = 2;
+        
+        var start = 0;
+        $scope.timer=1;
+        $scope.kolor="#00ff00"
+        
+        
+        $scope.end=1;
+        
+        $scope.klik=function(imagedata){
+            if(start==0){
+                //$scope.czas=parseInt($scope.parametry.trybId);
+                $scope.czas = $scope.loc
+                $scope.ms=$scope.czas
+                
+                var d = new Date();
+                var time = d.getTime();                
+                var ms = $scope.czas*1000
+                
+                
+                $scope.remain=ms+time
+                    
+                start=1                
+                
+                interval = $interval(function() {
+                    var d2 = new Date();
+                    $scope.now = d2.getTime();
+                    
+                    $scope.timems=$scope.remain-$scope.now
+                     
+                    var d3 = new Date();
+                    d3.setTime($scope.timems);
+                    
+                    $scope.ms=d3.getMilliseconds()
+                    $scope.sec=d3.getSeconds();
+                    $scope.min=d3.getMinutes();
+                    
+                    if($scope.sec<10){
+                        $scope.sec="0"+$scope.sec.toString()
+                    }   
+                    
+                    if($scope.ms<100 && $scope.ms>=10){
+                        $scope.ms="0"+$scope.ms.toString()
+                    }
+                    
+                    if($scope.ms<10){
+                        $scope.ms="00"+$scope.ms.toString()
+                    }
+                    
+                    $scope.dlu = 100*($scope.timems*0.008)/parseInt($scope.loc);
+                    
+                    if($scope.dlu<300){
+                        $scope.kolor="#ff0000"
+                    }
+                    
+                   // console.log($scope.dlu)
+                    if($scope.timems<=0){
+                        $interval.cancel(interval);
+                       document.getElementById("txt").textContent="Czas Ci spadł! Przegrałeś! Kliknij aby przeładować grę!"
+                        $scope.end=0;
+                      //  location.reload();
+                    }
+                    $scope.timer=0;
+                }, 4);
+            }
+            
+            if(zwolnenie){
+                zwolnenie--;
+                imagedata.sourceLog=imagedata.source;    
+                imagedata.funkcja=null
+                
+                arraychCheck.push({typ:imagedata.typ,source:imagedata.source,numer:imagedata.numer})
+                if(arraychCheck.length==2){
+                    //console.log(arraychCheck)
+                    if(arraychCheck[0].typ==arraychCheck[1].typ){
+                        pary++
+                        if(pary==8){
+                            $interval.cancel(interval);
+                            document.getElementById("txt").textContent="Wygrałeś! Kliknij aby przeładować grę!"
+                            $scope.end=0;
+                        }
+                            
+                        arraychCheck=[] 
+                        zwolnenie = 2
+                    }
+                    else{   
+                        var cheking = function() {
+                            $scope.array[arraychCheck[0].numer].sourceLog="img/0.jpg"
+                            $scope.array[arraychCheck[1].numer].sourceLog="img/0.jpg"
+                            $scope.array[arraychCheck[0].numer].funkcja=$scope.klik
+                            $scope.array[arraychCheck[1].numer].funkcja=$scope.klik   
+                            arraychCheck=[] 
+                            zwolnenie = 2
+                        }
+                        $timeout(cheking, 500);
+                    }
+                }
+            }
+        }
+        var numer=0;
+        for(var i=1;i<9;i++){
+            for(var j=0;j<2;j++){
+                var x = Math.floor(Math.random() * $scope.mieszanie.length) 
+              //  $scope.startarray.push()
+                $scope.array.push({sourceLog:"img/0.jpg",
+                                   source:"img/"+$scope.mieszanie[x]+".jpg",
+                                   typ:$scope.mieszanie[x],
+                                   numer:numer,
+                                   funkcja:$scope.klik
+                                  });
+                
+                $scope.mieszanie.splice(x, 1);   
+                numer++;
+            }            
+        }         
+        
+        $scope.arr=[1,2,3,5,6,7,9]
+        $scope.czas=$scope.loc;
+      
+        $scope.refresh=function(){
+            $scope.end=1;
+            $scope.dlu=0;
+            $scope.kolor="#00ff00"
+            $scope.parametry.trybId=null
+            console.log("klik")
+            $scope.parametry = $routeParams;                
+        
+            $scope.array=[];        
+            $scope.mieszanie=[];
+            $scope.startarray=[];        
+
+            for(var i=1;i<9;i++){
+                for(var j=0;j<2;j++){
+                    $scope.mieszanie.push(i);
+                }            
+            }
+
+            start=0
+            arraychCheck=[];
+            pary=0;
+            zwolnenie = 2;
+            $scope.timer=1;
+            $scope.kolor="#00ff00"
+            numer=0;
+            
+            for(var i=1;i<9;i++){
+                for(var j=0;j<2;j++){
+                    var x = Math.floor(Math.random() * $scope.mieszanie.length) 
+                  //  $scope.startarray.push()
+                    $scope.array.push({sourceLog:"img/0.jpg",
+                                       source:"img/"+$scope.mieszanie[x]+".jpg",
+                                       typ:$scope.mieszanie[x],
+                                       numer:numer,
+                                       funkcja:$scope.klik
+                                      });
+
+                    $scope.mieszanie.splice(x, 1);   
+                    numer++;
+                }            
+            }
+        }
+       
+    });
+  
+    app.directive('obazek',['$document', function($document) {
+      return {
+        restrict: 'E',
+        scope: {
+          dane: '=ikona'
+        },
+        templateUrl: 'obrazek.html',
+          link: function(scope, element, attr) {
+              
+              element.on('mousedown', function(event) {
+                  $document.on('click', click);                  
+              });              
+            }
+      };
+    }]);
+    
+    app.directive('time',['$document', function($document) {
+        return {
+            templateUrl: 'time.html'
+        };
+    }]);
+    
+    function click(event) {
+        var x=event.target;
+    }
+   
+    
+//<img ng-click="klikObrazke(x)" ng-src="{{x}}" class="bloczki" id="obrazek{{$index}}" alt="{{x}}" />
+</script>
+    
+<style>
+    #content{
+        width: 400px; 
+        height: 400px;
+        margin: 0 auto;
+    }
+    #blockContent{
+        width: 800px;
+    }
+    .bloczki{
+        width: 200px;
+        float: left;
+    }
+    #ahred{
+        width:100vw;
+        height:100vh;
+        position:absolute;
+        left:0;
+        top:0;
+        background:#3d3d3d;
+        text-decoration: none;
+        color:white;
+        font-size:3vw; 
+        text-align: center;            
+    }
+    #txt{
+        margin-top: 45vh;
+    }
+</style>
+    
+<body>    
+     
+    <div ng-view></div>
+    
+</body>
+</html>

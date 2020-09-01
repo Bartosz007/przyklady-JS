@@ -1,0 +1,44 @@
+Imiê:	Bartosz
+Nazwisko:	Krawczyk
+Klasa:	3ID2
+Termin (np. 50%):100%
+
+Zaznacz znakiem X (w nawiasie z punktami) Twoim zdaniem zrobione podpunkty z poni¿szej listy (dok³adny opis przy lekcjach!):
+np. (X 2p)
+
+CA£OŒÆ: max 15p (+1 bonus)
+
+ZA£O¯ENIE WYMAGANE: projekt zrobiony obiektowo
+UWAGA: to jest synteza! Dok³adne opisy dzia³ania przy odpowiednim temacie (np. maksymalne iloœci przedmiotów itd.)
+
+(X 1p)	0. wprowadzanie komunikatów
+		- komunikaty wpisywane z klawiatury (zatwierdzanie Enterem)
+		- rozpoznanie conajmniej trzech komunikatów (nconajmniej informacja w konsoli)
+
+	1. mapa, ruch
+(X 3p)		- mo¿liwoœæ przechodzenia po dostêpnych lokalizacjach (E/W/N/S), pokazywanie odpowiedniej grafiki i nazw lokalizacji
+(X 1p)		- pokazanie odpowiednich kierunków na kompasie + "You can go"
+
+	2. przemieszczanie przedmiotów
+(X 1p)		- rozmieszczone przedmioty pocz¹tkowe - "You see"
+(X 2p)		- dzia³anie polecenia T(TAKE) / D(DROP) - "You see" + "You are carrying"
+
+	3. komunikaty
+(X 1.5p)	- pokazywanie odpowiednich komunikatów conajmniej trzech poleceñ (np. przy przechodzeniu po lokalizacjach, use, vocabulary itp.)
+(X 0.5p)	- conajmniej dwa wybrane komunikaty "z timeoutem" (np. próba wejœcia na lokacjê za smokiem)
+
+	4. logika gry
+(X 1p)		- polecenie U(USE) (odpowiedni komunikat, uzyskanie przedmiotu - dla kilku przedmiotów)
+(X 3p)		- oprogramowanie wszystkich zale¿noœci (przedmioty) doprowadzaj¹cych do ukoñczenia gry
+
+(X 1p)	5. dodatki
+		- czo³ówka, instrukcja gry
+		- hejna³
+		- polecenia V(VOCABULARY), G (GOSSIPS)
+
+	6. bonusy
+(X 0.5p)	- po wejœciu do gry domyœlnie wpisuje du¿e znaki (caps/shift - zmiana)
+(0.5p)		- wyg¹d i dzia³anie dok³adnie jak w oryginale (wyglad prompta, jego zachwanie, pomijam ³adowanie grafik)
+
+Wystepuje problem z przecinkiem, ale nie wp³ywa on w ¿aden sposób na grê.
+SUMA PUNKTÓW: 15,5

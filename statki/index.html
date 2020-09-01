@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+		<title>Statki</title>
+        <script>
+            
+             var tabk=[]
+            for(var i=-1;i<14;i++){
+                tabk[i]=[]
+                
+                for(var j=-1;j<11;j++){
+                    tabk[i][j]=0
+                }
+            }
+            
+            var pl1="<div id='plansza1'>"
+            for(var i=0;i<10;i++){
+                pl1=pl1+("<div class='rzad'>")
+                for(var j=0;j<10;j++){
+                    var temp = '<div id="k_' + i + '_' + j + '"' + 'class="pole" ></div>'
+                  pl1=pl1+temp
+                }
+                pl1=pl1+("</div>")
+            }
+            pl1=pl1+("</div>")
+            
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //---------------------------------------------------------------------------------------------------------------- 
+            
+            var tab=[]
+            for(var i=0;i<12;i++){
+                tab[i]=[]
+                
+                for(var j=0;j<12;j++){
+                    tab[i][j]=0
+                }
+            }
+            var stan
+            
+            var pl2="<div id='plansza2'>"
+            for(var i=1;i<11;i++){
+                pl2=pl2+("<div class='rzadkom'>")
+                for(var j=1;j<11;j++){
+                    temp = '<div id="g_' + i + '_' + j + '"' + 'class="polekom" >' +'</div>'
+                    pl2=pl2+temp
+                }
+                pl2=pl2+("</div>")
+            }
+            pl2=pl2+("</div>")
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //---------------------------------------------------------------------------------------------------------------- 
+            var nick=prompt("Jak się nazywasz?")
+            console.log(nick)
+        </script>
+        
+        <style>
+            .rzadkom{
+                float:left;
+            }
+            .polekom{
+                width:50px;
+                height:50px;
+                background-color: transparent;
+                border:2px white solid;
+                color:grey;
+            }
+            #plansza2{
+                height:600px;
+                margin-left:100px;
+            }
+            
+            #plansza1{
+                height: 600px;
+                margin-left:100px;
+            }
+            body{
+                width:99%;
+                height:100%;
+                background-image: url("niebo.jpg")
+            }
+            .rzad{
+                float:left;
+            }
+            .pole{
+                width:50px;
+                height:50px;
+                border:2px white solid;
+                color:grey;
+                background-color: transparent;
+            }
+            .stateczki{
+                margin-left: 1%;
+                margin-right: 1%;
+                height: 300px;
+            }
+            #stt0{
+                overflow: auto;
+                float: left;
+                background-color: transparent;
+                width:50px;
+                height: 200px;
+            }
+            #stt1,#stt2{
+                margin-left: 10px;
+                float:left;
+                background-color: transparent;
+                width:50px;
+                height: 150px;
+            }
+            #stt3,#stt4,#stt5{
+                margin-left: 10px;
+                float:left;
+                background-color: transparent;
+                width:50px;
+                height: 100px;
+            }
+            #stt6,#stt7,#stt8,#stt9{
+                margin-left: 10px;
+                background-color: transparent;
+                float:left;
+                width:50px;
+                height: 50px;
+            }.pst{
+                background-color: dodgerblue;
+                width: 50px;
+                height: 50px;
+            }
+            
+            #komputer{
+                width:48%;
+                display: inline-block;
+            }
+            #gracz{
+                width:48%;
+                display: inline-block;
+            }
+            #start{
+                width:300px;
+                height: 90px;
+                position: absolute;
+                background-color: dodgerblue;
+                font-size: 55px;
+                text-align: center;
+                padding-top: 18px;
+                left:36%;
+                top:100px;
+                color:white;
+                border:2px white solid;
+                border-radius: 5px;
+                font-variant: small-caps;
+                display: none;
+            }
+            .krzyzyk,.kropka{
+                width:50px;
+                height: 50px;
+            }
+            .st{
+                border:3px white solid;   
+            }
+            #nkom{
+                position: absolute;
+                left:62%;
+                top:22%;
+                color:white;
+                font-variant: small-caps;
+                font-size: 50px;
+                font-weight: bold;
+            } 
+            #ngr{
+                left:16%;
+                top:22%;
+                position: absolute;
+                color:white;
+                font-variant: small-caps;
+                font-size: 50px;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="nkom">Komputer</div>
+        <div id="ngr">Gracz</div>
+        <div id="gracz">
+            <div class="stateczki">
+                <div class="st" id="stt0"></div>
+                <div class="st" id="stt1"></div>
+                <div class="st" id="stt2"></div>
+                <div class="st" id="stt3"></div>
+                <div class="st" id="stt4"></div>
+                <div class="st" id="stt5"></div>
+                <div class="st" id="stt6"></div>
+                <div class="st" id="stt7"></div>
+                <div class="st" id="stt8"></div>
+                <div class="st" id="stt9"></div>
+            </div>
+        </div>
+        <div id="komputer"></div>
+        <div id="start">Start</div>
+        
+        
+        <script>
+            
+            document.getElementById("ngr").innerHTML="<div id='ngr'>"+nick+"</div>"
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //---------------------------------------------------------------------------------------------------------------- 
+            var numer=4
+            var pozst=0
+            var zmiengra=true
+            var stanl=true
+            var dlugosc =[4,3,3,2,2,2,1,1,1,1]
+            dlugosc[-1]=null
+            
+            document.getElementById("gracz").innerHTML+=pl1
+            document.getElementsByClassName("st")[0].style.backgroundColor="dodgerblue"
+            
+            function mover(){
+                this.style.backgroundColor="green";
+            }
+			
+            function mout(){
+                this.style.backgroundColor="transparent";
+            }
+			
+            var pojemnik=document.getElementsByClassName("st")[0]
+            
+            function mclick(){
+                for(var i=0;i<dlugosc.length;i++){
+                    document.getElementsByClassName("st")[i].style.backgroundColor="transparent"
+					var el = document.getElementsByClassName("st")[i]
+					el.onmouseover=mover;el.onmouseout=mout; el.onclick=mclick;
+                }
+                
+                this.style.backgroundColor="dodgerblue";
+                this.onmouseout=null
+				this.onmouseover=null
+                pojemnik=this
+                var blok=document.querySelectorAll(".st")
+				for(var i=0;i<blok.length;i++)//index
+					if(blok[i]==pojemnik) pozst=i			
+				
+                numer=dlugosc[pozst]
+                
+            }
+            var dd=0
+            
+            function zmienianie(){
+                
+                var y=parseInt(this.id[4])
+                var x=parseInt(this.id[2])
+                
+                if(stanl==true){ 
+                    for(var j=(y-1);j<=(y+numer);j++){
+                        for(var k=(x-1);k<=(x+1);k++){
+                            dd=dd+tabk[k][j]
+                        }
+                    }
+                    
+                    if(dd==0){
+                        if(y<(11-numer)){
+                            for(var i=0;i<numer;i++){
+                                document.getElementById("k_" + x + "_" +(y+i)).style.backgroundColor="green"
+                            }
+                        }
+                    }else{
+                        if(y<(11-numer)){
+                            for(var i=0;i<numer;i++){
+                                document.getElementById("k_" + x + "_" +(y+i)).style.backgroundColor="red"
+                            }
+                        }
+                    }
+                }else{
+                    
+                    for(var j=(x-1);j<=(x+numer);j++){
+                        for(var k=(y-1);k<=(y+1);k++){
+                            dd=dd+tabk[j][k]
+                        }
+                    }
+                    
+                    if(dd==0){
+                        if(x<(11-numer)){
+                            for(var i=0;i<numer;i++){
+                                document.getElementById("k_" + (x+i) + "_" +y).style.backgroundColor="green"
+                            }
+                        }
+                    }else{
+                        if(x<(11-numer)){
+                            for(var i=0;i<numer;i++){
+                                document.getElementById("k_" + (x+i) + "_" +y).style.backgroundColor="red"
+                            }
+                        }
+                        
+                    }
+                }
+                dd=0
+            }
+            
+            function czyszczenie(){                
+                var y=parseInt(this.id[4])
+                var x=parseInt(this.id[2])
+                if(stanl==true){
+                    if(y<(11-numer)){
+                        for(var i=0;i<numer;i++){
+                             document.getElementById("k_" + x + "_" +(y+i)).style.backgroundColor="transparent"
+                        }
+                    }
+                }else{
+                    if(x<(11-numer)){
+                       for(var i=0;i<numer;i++){
+                             document.getElementById("k_" + (x+i) + "_" +y).style.backgroundColor="transparent"
+                       }
+                    }
+                }
+                
+            }
+            
+            function klikplanszy(){
+                
+                if(dlugosc[0] !=null){
+                    
+                    var y=parseInt(this.id[4])
+                    var x=parseInt(this.id[2])
+                    if(stanl==true){
+                        
+                        for(var j=(y-1);j<=(y+numer);j++){
+                            for(var k=(x-1);k<=(x+1);k++){
+                                dd=dd+tabk[k][j]
+                            }
+                        }
+                        
+                        if(dd==0){
+                            if(y<(11-numer)){
+                                for(var i=0;i<numer;i++){
+                                    var temp='<div class="pst"></div>'
+                                    var gg=document.getElementById("k_" + x + "_" +(y+i)).innerHTML=temp
+                                    tabk[x][(y+i)]=1
+                                }
+                            }
+                        }
+                    }else{
+                        
+                        for(var j=(x-1);j<=(x+numer);j++){
+                                        for(var k=(y-1);k<=(y+1);k++){
+                                            dd=dd+tabk[j][k]
+                                        }
+                                    }
+                        if(dd==0){
+                            if(x<(11-numer)){
+                                for(var i=0;i<numer;i++){
+                                    var temp='<div class="pst"></div>'
+                                    document.getElementById("k_" + (x+i) + "_" +y).innerHTML=temp    
+                                    tabk[(x+i)][y]=1
+                        
+                                }
+                            }
+                        }
+                    }
+                    
+					
+					if(dd==0){
+                        pojemnik.remove()
+						if(pojemnik==0){
+							dlugosc.shift()
+						}else{
+							dlugosc.splice(pozst,1)
+						}
+                        numer=dlugosc[-1]
+					}
+					
+					dd=0
+                }
+				
+                if(dlugosc[0]==null){
+                    document.getElementById("start").style.display="block"
+                }
+                if(zmiengra==false){
+                    alert("Zła plansza!")
+                }
+                
+            }
+            
+            function zmiana(event){
+                event.preventDefault()
+                stanl=!stanl
+                
+                var y=parseInt(this.id[4])
+                var x=parseInt(this.id[2])
+                if(stanl==false){
+                    if(y<(11-numer)){
+                        for(var i=0;i<numer;i++){
+                             document.getElementById("k_" + x + "_" +(y+i)).style.backgroundColor="transparent"
+                        }
+                    }
+                }else{
+                   for(var i=0;i<numer;i++){
+                       document.getElementById("k_" + (x+i) + "_" +y).style.backgroundColor="transparent"
+                   }
+                }
+                
+            }
+                    
+            
+            var ce = document.getElementsByClassName("st").length
+            for(var i=0;i<ce;i++){
+                var el=document.getElementsByClassName("st")[i]
+            el.onmouseover=mover;el.onmouseout=mout; el.onclick=mclick;el.oncontextmenu=ctx;
+            }
+            
+            var ce = document.getElementsByClassName("pole").length
+            for(var i=0;i<ce;i++){
+                var el=document.getElementsByClassName("pole")[i]
+                el.oncontextmenu=zmiana;
+                el.onmouseover=zmienianie;
+                el.onclick=klikplanszy;
+                el.onmouseout=czyszczenie;
+            }
+            
+             
+           
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //---------------------------------------------------------------------------------------------------------------- 
+            document.getElementById("komputer").innerHTML+=pl2
+            
+            do{
+            
+            var kierunek=Math.floor(Math.random() * 2)
+            
+            if(kierunek==0){   
+                    
+                    var x = Math.floor((Math.random() * 10) +1 ) 
+                
+                    var y = Math.floor((Math.random() * 7) + 1) 
+                    
+                if( tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 &&
+                   tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x-1][y+2]==0 && tab[x][y+2]==0 && tab[x+1][y+3]==0 && 
+                   tab[x-1][y+3]==0 && tab[x][y+3]==0 && tab[x+1][y+3]==0 && tab[x-1][y+4]==0 && tab[x][y+4]==0 && tab[x+1][y+4]==0){
+                   tab[x][y]=1
+                   tab[x][y+1]=1
+                   tab[x][y+2]=1
+                   tab[x][y+3]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+                
+            }
+            if(kierunek==1){           
+                    var x = Math.floor((Math.random() * 7) +1) 
+                
+                    var y = Math.floor((Math.random() * 10) + 1) 
+                if(tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x+2][y+1]==0 && tab[x+3][y+1]==0 && tab[x+4][y+1]==0 &&
+                  tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 && tab[x+2][y]==0 && tab[x+3][y]==0 && tab[x+4][y]==0 &&
+                  tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x+2][y-1]==0 && tab[x+3][y-1]==0 && tab[x+4][y-1]==0){
+                    tab[x][y]=1
+                    tab[x+1][y]=1
+                    tab[x+2][y]=1
+                    tab[x+3][y]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+            }
+                
+            }while(stan=="falsz")
+            
+            stan="falsz"
+            for(var i=0;i<2;i++){
+                do{
+            
+            var kierunek=Math.floor(Math.random() * 2)
+            
+            if(kierunek==0){  
+                    
+                    var x = Math.floor((Math.random() * 10) +1 ) 
+                
+                    var y = Math.floor((Math.random() * 8) + 1) 
+                    
+                if( tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 &&
+                   tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x-1][y+2]==0 && tab[x][y+2]==0 && tab[x+1][y+3]==0 && 
+                   tab[x-1][y+3]==0 && tab[x][y+3]==0 && tab[x+1][y+3]==0 ){
+                   tab[x][y]=1
+                   tab[x][y+1]=1
+                   tab[x][y+2]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+                
+            }
+            if(kierunek==1){           
+                    var x = Math.floor((Math.random() * 8) +1) 
+                
+                    var y = Math.floor((Math.random() * 10) + 1) 
+                if(tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x+2][y+1]==0 && tab[x+3][y+1]==0 && 
+                  tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 && tab[x+2][y]==0 && tab[x+3][y]==0 && 
+                  tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x+2][y-1]==0 && tab[x+3][y-1]==0 ){
+                    tab[x][y]=1
+                    tab[x+1][y]=1
+                    tab[x+2][y]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+            }
+                
+            }while(stan=="falsz")
+            }
+            
+            stan="falsz"
+            for(var i=0;i<3;i++){
+                do{
+            
+            var kierunek=Math.floor(Math.random() * 2)
+            
+            if(kierunek==0){   
+                    
+                    var x = Math.floor((Math.random() * 10) +1 ) 
+                
+                    var y = Math.floor((Math.random() * 9) + 1) 
+                    
+                if( tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 &&
+                   tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x-1][y+2]==0 && tab[x][y+2]==0 && tab[x+1][y+2]==0 ){
+                   tab[x][y]=1
+                   tab[x][y+1]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+                
+            }
+            if(kierunek==1){           
+                    var x = Math.floor((Math.random() * 9) +1) 
+                
+                    var y = Math.floor((Math.random() * 10) + 1)
+                if(tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 && tab[x+2][y+1]==0 && 
+                  tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 && tab[x+2][y]==0 && 
+                  tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x+2][y-1]==0 ){
+                    tab[x][y]=1
+                    tab[x+1][y]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+            }
+            }while(stan=="falsz")
+                }
+                
+            stan="falsz"
+            
+            for(var i=0;i<4;i++){
+                do{
+                    var x = Math.floor((Math.random() * 10) +1 ) 
+                
+                    var y = Math.floor((Math.random() * 10) + 1) 
+                    
+                if( tab[x-1][y-1]==0 && tab[x][y-1]==0 && tab[x+1][y-1]==0 && tab[x-1][y]==0 && tab[x][y]==0 && tab[x+1][y]==0 &&
+                   tab[x-1][y+1]==0 && tab[x][y+1]==0 && tab[x+1][y+1]==0 ){
+                    
+                    tab[x][y]=1
+                    
+                    stan="prawda"
+                }else{
+                    stan="falsz"
+                }
+                }while(stan=="falsz")
+            }
+            
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //---------------------------------------------------------------------------------------------------------------- 
+            function startt(){
+                document.getElementById("start").style.backgroundColor="transparent"
+                zmiengra=false
+            }
+            var licznik=[]
+            licznik[0]=0
+            licznik[1]=0
+            
+            function strzal(){
+                var lng
+                var lat
+                var idek =this.id.replace("g_","")
+               if(!zmiengra){
+                    if(idek.length<4){
+                        x=idek[0]
+                        y=idek[2]
+                    }else if(idek.length==4){
+                        if(idek[1]=="_"){
+                            x=idek[0]
+                            y=idek.substr(2)
+                        }else{
+                            x=idek[0]+idek[1]
+                            y=idek[3]
+                            
+                        }
+                    }else{
+                        x=idek[0]+idek[1]
+                        y=idek.substr(3)
+                    }   
+                   if(tab[x][y]!=2){
+                       if(tab[x][y]==1){
+                           var temp="<img src='krzyzyk.png' alt='krzyzyk' class='krzyzyk' />"
+                           document.getElementById("g_" + x + "_" +y).style.backgroundColor="dodgerblue"
+                           this.innerHTML=temp
+                           licznik[0]++
+                           tab[x][y]=2
+                       }else{
+                           var temp="<img src='kropka.png' alt='kropka' class='kropka' />"
+                           this.innerHTML=temp
+                           tab[x][y]=2
+                       }
+                       
+                       if(licznik[0]==20){
+                           var iso=confirm("Wygrałeś!, wciśnij OK aby odświeżyć stronę!")
+                           if(iso)
+                               window.location.reload()
+                               }
+                       do{
+                           var warunek=false
+                           var x = Math.floor((Math.random() * 10))
+                           var y = Math.floor((Math.random() * 10))
+                           if(tabk[x][y]!=2){
+                               if(tabk[x][y]!=0){
+                                   var temp="<img src='krzyzyk.png' alt='krzyzyk' class='krzyzyk' />"
+                                   document.getElementById("k_" + x + "_" +y).innerHTML=temp
+                                   document.getElementById("k_" + x + "_" +y).style.backgroundColor="dodgerblue"
+                                   tabk[x][y]=2
+                                   licznik[1]++
+                               }else{
+                                   var temp="<img src='kropka.png' alt='kropka' class='kropka' />"
+                                   document.getElementById("k_" + x + "_" +y).innerHTML=temp
+                                   tabk[x][y]=2
+                               }
+                               warunek=true
+                           }
+                       }while(!warunek)
+                           if(licznik[1]==20){
+                               var iso=confirm("Wygrał komputer, wciśnij OK aby odświeżyć stronę!")
+                               if(iso)
+                                   window.location.reload()
+                                   }
+                   }else{
+                       alert("W to pole już strzeliłeś!")
+                   }
+                 
+                }
+                
+            }
+            function ctx(){
+                event.preventDefault()
+            }
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            
+            //----------------------------------------------------------------------------------------------------------------
+            document.getElementById("start").onclick=startt;
+            var ce = document.getElementsByClassName("polekom").length
+            for(var i=0;i<ce;i++){
+                var el=document.getElementsByClassName("polekom")[i]
+                el.onclick=strzal;
+                el.oncontextmenu=ctx;
+            }
+            
+            
+        </script>
+    </body>
+</html>
